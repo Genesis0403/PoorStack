@@ -1,9 +1,14 @@
 package com.epam.stack
 
+import java.lang.IllegalArgumentException
+
 abstract class AbstractMutableStack<T> : AbstractStack<T>(), MutableCollection<T> {
 
     override fun addAll(elements: Collection<T>): Boolean {
-        throw UnsupportedOperationException()
+        for (el in elements) {
+            add(el)
+        }
+        return true
     }
 
     override fun removeAll(elements: Collection<T>): Boolean {
@@ -14,7 +19,11 @@ abstract class AbstractMutableStack<T> : AbstractStack<T>(), MutableCollection<T
         throw UnsupportedOperationException()
     }
 
+    override fun remove(element: T): Boolean {
+        throw UnsupportedOperationException()
+    }
 
+    abstract fun pop(): T
 }
 
 class MutableStack<T> : AbstractMutableStack<T>() {
@@ -24,8 +33,7 @@ class MutableStack<T> : AbstractMutableStack<T>() {
     class Node<T>(val el: T, var prev: Node<T>?)
 
     override fun add(element: T): Boolean {
-        val prev = top?.prev
-        top = Node(element, prev)
+        top = Node(element, top)
         return true
     }
 
@@ -38,12 +46,13 @@ class MutableStack<T> : AbstractMutableStack<T>() {
         size = 0
     }
 
-    override fun remove(element: T): Boolean {
-        if (top == null) return false
+    override fun pop(): T {
+        if (top == null) throw IllegalArgumentException()
         val prev = top!!.prev
+        val el = top!!.el
         top!!.prev = null
         top = prev
-        return true
+        return el
     }
 
     override fun peek(): T? {
@@ -62,11 +71,12 @@ class MutableStack<T> : AbstractMutableStack<T>() {
             return temp!!.el
         }
 
-        override fun remove() { //TODO iterator remove impl(later)
-            throw UnsupportedOperationException()
+        override fun remove() {
+            throw java.lang.UnsupportedOperationException();
         }
     }
 
     override fun iterator(): MutableIterator<T> = Itr()
 
+    //TODO implement toStack()
 }
