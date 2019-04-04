@@ -1,8 +1,86 @@
 package com.epam.stack
 
-abstract class AbstractStack<T> : Collection<T> {
+import java.lang.IllegalArgumentException
 
-    override var size: Int = 0
+interface ImmutableStack<T> : Collection<T> {
+
+    override val size: Int
+
+    fun peek(): T?
+
+    override fun contains(element: T): Boolean
+
+    override fun containsAll(elements: Collection<T>): Boolean
+
+    override fun isEmpty(): Boolean
+
+    override fun iterator(): Iterator<T>
+
+}
+
+interface MutableStack<T> : ImmutableStack<T>, MutableCollection<T> {
+
+    fun pop(): T
+
+    override fun add(element: T): Boolean
+
+    override fun addAll(elements: Collection<T>): Boolean
+
+    override fun clear()
+
+    override fun remove(element: T): Boolean
+
+    override fun removeAll(elements: Collection<T>): Boolean
+
+    override fun retainAll(elements: Collection<T>): Boolean
+}
+
+class Stack<T> : MutableStack<T>, MutableCollection<T> {
+
+    private var _size = 0
+
+    override val size: Int
+        get() { return _size}
+
+    private var top: Node<T>? = null
+
+    class Node<T>(val el: T, var prev: Node<T>?)
+
+    override fun add(element: T): Boolean {
+        top = Node(element, top)
+        _size++
+        return true
+    }
+
+    override fun pop(): T {
+        if (top == null) throw IllegalArgumentException()
+        val prev = top!!.prev
+        val el = top!!.el
+        top!!.prev = null
+        top = prev
+        return el
+    }
+
+    override fun peek(): T? {
+        return top?.el
+    }
+
+    override fun clear() {
+        while (top != null) {
+            val prev = top?.prev
+            top?.prev = null
+            top = prev
+        }
+        _size = 0
+    }
+
+    override fun addAll(elements: Collection<T>): Boolean {
+        for (el in elements) {
+            add(el)
+            _size++
+        }
+        return true
+    }
 
     override fun contains(element: T) = iterator().asSequence().contains(element)
 
@@ -11,18 +89,19 @@ abstract class AbstractStack<T> : Collection<T> {
 
     override fun isEmpty() = size == 0
 
-    abstract fun peek(): T?
-}
+    override fun remove(element: T): Boolean {
+        throw UnsupportedOperationException()
+    }
 
-class Stack<T> : AbstractStack<T>() {
+    override fun removeAll(elements: Collection<T>): Boolean {
+        throw UnsupportedOperationException()
+    }
 
-    private var top: Node<T>? = null
+    override fun retainAll(elements: Collection<T>): Boolean {
+        throw UnsupportedOperationException()
+    }
 
-    class Node<T>(val el: T, val prev: Node<T>?)
-
-    override fun peek(): T? = top?.el
-
-    inner class Itr : Iterator<T> {
+    inner class Itr : MutableIterator<T> {
 
         private var cursor = top
 
@@ -33,7 +112,11 @@ class Stack<T> : AbstractStack<T>() {
             cursor = cursor?.prev
             return temp!!.el
         }
+
+        override fun remove() {
+            throw UnsupportedOperationException()
+        }
     }
 
-    override fun iterator() = Itr()
+    override fun iterator(): MutableIterator<T> = Itr()
 }
