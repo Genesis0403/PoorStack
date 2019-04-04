@@ -82,12 +82,12 @@ class Stack<T> : MutableStack<T>, MutableCollection<T> {
         return true
     }
 
+    override fun isEmpty() = size == 0
+
     override fun contains(element: T) = iterator().asSequence().contains(element)
 
     override fun containsAll(elements: Collection<T>)
             = iterator().asSequence().all { el -> elements.contains(el)}
-
-    override fun isEmpty() = size == 0
 
     override fun remove(element: T): Boolean {
         throw UnsupportedOperationException()
@@ -105,7 +105,7 @@ class Stack<T> : MutableStack<T>, MutableCollection<T> {
 
         private var cursor = top
 
-        override fun hasNext() = cursor?.prev != null
+        override fun hasNext() = cursor != null
 
         override fun next(): T {
             val temp = cursor

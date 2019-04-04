@@ -3,8 +3,7 @@ package com.epam.poorstack
 import com.epam.stack.MutableStack
 import com.epam.stack.Stack
 import org.junit.Assert
-import org.junit.Assert.assertEquals
-import org.junit.Assert.fail
+import org.junit.Assert.*
 import org.junit.Test
 
 class MutableStackTest {
@@ -39,5 +38,22 @@ class MutableStackTest {
         } catch (e: Exception) {
             Assert.assertTrue(true)
         }
+    }
+
+    @Test
+    fun `whenGivenStack iterateIt checkElements`() {
+        val stack: MutableStack<String> = Stack()
+        stack.apply {
+            add("ne")
+            add("rugaite")
+            add("za")
+            add("!!")
+        }
+        val list = mutableListOf<String>()
+        for (el in stack) {
+            list.add(el)
+        }
+        val expected = arrayOf("!!", "za", "rugaite", "ne")
+        assertArrayEquals(expected, list.toTypedArray())
     }
 }
