@@ -3,7 +3,10 @@ package com.epam.stack
 import java.lang.IllegalArgumentException
 
 interface ImmutableStack<T> : Collection<T> {
-    override var size: Int
+
+    override val size: Int
+
+    fun peek(): T?
 
     override fun contains(element: T): Boolean
 
@@ -12,13 +15,12 @@ interface ImmutableStack<T> : Collection<T> {
     override fun isEmpty(): Boolean
 
     override fun iterator(): Iterator<T>
+
 }
 
 interface MutableStack<T> : ImmutableStack<T>, MutableCollection<T> {
 
     fun pop(): T
-
-    fun peek(): T?
 
     override fun add(element: T): Boolean
 
@@ -35,7 +37,10 @@ interface MutableStack<T> : ImmutableStack<T>, MutableCollection<T> {
 
 class Stack<T> : MutableStack<T>, MutableCollection<T> {
 
-    override var size: Int = 0
+    private var _size = 0
+
+    override val size: Int
+        get() { return _size}
 
     private var top: Node<T>? = null
 
@@ -43,6 +48,7 @@ class Stack<T> : MutableStack<T>, MutableCollection<T> {
 
     override fun add(element: T): Boolean {
         top = Node(element, top)
+        _size++
         return true
     }
 
@@ -65,34 +71,16 @@ class Stack<T> : MutableStack<T>, MutableCollection<T> {
             top?.prev = null
             top = prev
         }
-        size = 0
+        _size = 0
     }
 
     override fun addAll(elements: Collection<T>): Boolean {
         for (el in elements) {
             add(el)
+            _size++
         }
         return true
     }
-
-    inner class Itr : MutableIterator<T> {
-
-        private var cursor = top
-
-        override fun hasNext() = cursor?.prev != null
-
-        override fun next(): T {
-            val temp = cursor
-            cursor = cursor?.prev
-            return temp!!.el
-        }
-
-        override fun remove() {
-            throw UnsupportedOperationException()
-        }
-    }
-
-    override fun iterator(): MutableIterator<T> = Itr()
 
     override fun contains(element: T) = iterator().asSequence().contains(element)
 
@@ -113,5 +101,22 @@ class Stack<T> : MutableStack<T>, MutableCollection<T> {
         throw UnsupportedOperationException()
     }
 
-    //TODO implement toStack()
+    inner class Itr : MutableIterator<T> {
+
+        private var cursor = top
+
+        override fun hasNext() = cursor?.prev != null
+
+        override fun next(): T {
+            val temp = cursor
+            cursor = cursor?.prev
+            return temp!!.el
+        }
+
+        override fun remove() {
+            throw UnsupportedOperationException()
+        }
+    }
+
+    override fun iterator(): MutableIterator<T> = Itr()
 }
