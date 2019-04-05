@@ -38,8 +38,10 @@ class MainActivity : AppCompatActivity() {
 
         val popButton = findViewById<Button>(R.id.pop_button_id)
         popButton.setOnClickListener {
-            stack.pop()
-            viewAdapter.notifyDataSetChanged()
+            if (!stack.isEmpty()) {
+                stack.pop()
+                viewAdapter.notifyDataSetChanged()
+            }
         }
     }
 
