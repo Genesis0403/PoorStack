@@ -1,6 +1,7 @@
 package com.epam.stack
 
 import java.lang.IllegalArgumentException
+import java.lang.IndexOutOfBoundsException
 
 interface ImmutableStack<T> : Collection<T> {
 
@@ -37,6 +38,16 @@ interface MutableStack<T> : ImmutableStack<T>, MutableCollection<T> {
 
 class Stack<T> : MutableStack<T>, MutableCollection<T> {
 
+    operator fun get(index: Int): T? {
+        if (index < 0 || index > size) throw IndexOutOfBoundsException()
+        val ind = size - index
+        var element = top
+        for (index in size-1 downTo ind) {
+            element = element?.prev
+        }
+        return element?.el
+    }
+
     private var _size = 0
 
     override val size: Int
@@ -58,6 +69,7 @@ class Stack<T> : MutableStack<T>, MutableCollection<T> {
         val el = top!!.el
         top!!.prev = null
         top = prev
+        _size--
         return el
     }
 

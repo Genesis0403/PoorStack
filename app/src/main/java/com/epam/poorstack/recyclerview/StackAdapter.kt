@@ -6,8 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.epam.poorstack.R
+import com.epam.stack.Stack
 
-class StackAdapter(private val dataSet: Array<String>) : RecyclerView.Adapter<StackAdapter.StackViewHolder>() {
+class StackAdapter(private val dataSet: Stack<String>) : RecyclerView.Adapter<StackAdapter.StackViewHolder>() {
 
     class StackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var textView: TextView? = null
@@ -18,7 +19,7 @@ class StackAdapter(private val dataSet: Array<String>) : RecyclerView.Adapter<St
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): StackViewHolder {
         val textView = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.list_item_view, viewGroup, false) as TextView
+            .inflate(R.layout.list_item_view, viewGroup, false)
         return StackViewHolder(textView)
     }
 
